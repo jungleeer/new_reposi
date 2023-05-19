@@ -1,0 +1,34 @@
+#coding=utf8
+"""
+toPyModel(model_prt)
+"""
+import os
+os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
+
+from cn.ffcs.devops.db.dbtemplate import MysqlTemplate
+from cn.ffcs.devops.db.dbtemplate import OracleTemplate
+from cn.ffcs.devops.privileges.add_pri import add_pri
+
+def mod_channel_name():
+    conn = MysqlTemplate('CRM3DB')
+    conn_oracle = OracleTemplate('CRMV3')
+
+    # 判断输入数据格式
+    sql = "SELECT * FROM fjruanjg.xm_quyugejie_channel"
+    result0 = conn_oracle.execute_fetchall(sql, None, True)
+    for one in result0:
+        sql = "update channel set common_region_id = %s,channel_name = %s,update_date=now() where channel_nbr = %s"
+        #print(one)
+        conn.execute(sql, [one['REGION_ID'], one['CHANNEL_NAME'], one['CHANNEL_NBR']])
+        conn.commit()
+    conn.close()
+    conn_oracle.close()
+
+
+if __name__ == '__main__':
+    print mod_channel_name()
+
+
+
+
+
